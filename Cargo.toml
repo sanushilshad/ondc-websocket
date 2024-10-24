@@ -1,0 +1,46 @@
+[package]
+name = "placeorder-websocket"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix = "0.13.5"
+actix-http =  "3"
+actix-web = "4"
+actix-web-actors = "4.3.1"
+anyhow = "1.0.91"
+chrono = { version = "0.4", features = ["serde"] }
+config = { version = "0.14.0", default-features = false}
+futures = "0.3.31"
+jsonwebtoken = "9.2"
+opentelemetry = "0.26"
+opentelemetry-otlp = "0.26.0"
+opentelemetry_sdk = { version = "0.26.0", features = ["rt-tokio"] }
+secrecy = { version = "0.10.3", features = ["serde"] }
+serde = { version = "1.0.213", features = ["derive"] }
+serde_json = { version = "1.0.128", default-features = false}
+thiserror = "1.0.65"
+tokio = { version = "1.41", features = ["macros", "rt-multi-thread"] }
+tracing = { version = "0.1", features = ["log"] }
+tracing-actix-web = "0.7.14"
+tracing-log = "0.2"
+tracing-opentelemetry = "0.27.0"
+tracing-subscriber = { version = "0.3", features = ["registry", "env-filter"] }
+utoipa = { version = "5", features = ["chrono"] }
+utoipa-swagger-ui = { version = "8.0.2", features = ["actix-web"] }
+utoipauto = "0.2.0"
+uuid = { version = "1.11.0", default-features = false, features = ["v4", "serde"] }
+
+
+[lib]
+path="src/lib.rs"
+
+
+[[bin]]
+path = "src/main.rs"
+name = "placeorder-websocket"
+
+
+[profile.release]
+opt-level = 3 # 3 for release and 0 for dev
+strip = "symbols"
