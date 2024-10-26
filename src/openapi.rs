@@ -6,11 +6,11 @@ use utoipauto::utoipauto;
 #[derive(OpenApi)]
 #[openapi(
     tags(
-        (name = "PlaceOrder WebSocket REST API", description = "PlaceOrder WebSocket API Endpoints")
+        (name = "ONDC WebSocket REST API", description = "ONDC WebSocket API Endpoints")
     ),
     info(
-        title = "PlaceOrder WebSocket API",
-        description = "PlaceOrder WebSocket API Endpoints",
+        title = "ONDC WebSocket API",
+        description = "ONDC WebSocket API Endpoints",
         version = "1.0.0",
         license(name = "MIT", url = "https://opensource.org/licenses/MIT")
     ),

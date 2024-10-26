@@ -3,10 +3,10 @@
 // use telemetry::{get_subscriber_with_jeager, init_subscriber};
 // use utils::{get_configuration, run_custom_commands};
 
-use placeorder_websocket::commands::run_custom_commands;
-use placeorder_websocket::startup::Application;
-use placeorder_websocket::telemetry::{get_subscriber_with_jeager, init_subscriber};
-use placeorder_websocket::utils::get_configuration;
+use ondc_websocket::commands::run_custom_commands;
+use ondc_websocket::startup::Application;
+use ondc_websocket::telemetry::{get_subscriber_with_jeager, init_subscriber};
+use ondc_websocket::utils::get_configuration;
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
     let args: Vec<String> = std::env::args().collect();
@@ -16,7 +16,7 @@ async fn main() -> anyhow::Result<()> {
     } else {
         let configuration = get_configuration().expect("Failed to read configuration.");
         let subscriber = get_subscriber_with_jeager(
-            "placeorder-websocket".into(),
+            "ondc-websocket".into(),
             "info".into(),
             std::io::stdout,
         );

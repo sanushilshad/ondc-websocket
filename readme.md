@@ -1,7 +1,7 @@
 
-# PLACEORDER WEBSOCKET
+# ONDC WEBSOCKET
  
-Placeorder Websocket Service
+ONDC Websocket Service
 
 ## Tech Stack
 | Type | Technologies |
@@ -13,22 +13,22 @@ Placeorder Websocket Service
 ## CUSTOM COMMAND FOR DEBUG:
 ### FOR MIGRATION:
 ```
-cargo run --bin placeorder-websocket -- migrate
+cargo run --bin ondc-websocket -- migrate
 ```
 
 ### FOR TOKEN GENERATION:
 ```
-cargo run --bin placeorder-websocket -- generate_token  sanushilshad
+cargo run --bin ondc-websocket -- generate_token  sanushilshad
 ```
 
 ## CUSTOM COMMAND FOR RELEASE:
 ### FOR MIGRATION:
 
-    cargo run --release --bin  placeorder-websocket -- migrate
+    cargo run --release --bin  ondc-websocket -- migrate
 
     OR 
 
-    ./target/release/placeorder-websocket migrate
+    ./target/release/ondc-websocket migrate
 
 ### FOR TOKEN GENERATION:
 ```
@@ -36,7 +36,7 @@ cargo run --release --bin  rapid -- generate_token  sanushilshad
 
 OR 
 
-./target/release/placeorder-websocket generate_token  sanushilshad
+./target/release/ondc-websocket generate_token  sanushilshad
 ```
 
 ## SQLX OFFLINE MODE:
@@ -61,7 +61,7 @@ export DATABASE__USERNAME="postgres"
 export DATABASE__ACQUIRE_TIMEOUT=5
 export DATABASE__MAX_CONNECTIONS=2000
 export DATABASE__MIN_CONNECTIONS=10
-export OTEL_SERVICE_NAME="placeorder-websocket"
+export OTEL_SERVICE_NAME="ondc-websocket"
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="http://localhost:4317"
 
 
