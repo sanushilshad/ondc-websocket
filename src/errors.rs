@@ -25,7 +25,6 @@ pub enum GenericError {
     UnexpectedError(#[from] anyhow::Error),
     #[error("{0}")]
     InvalidJWT(String),
-
 }
 
 impl std::fmt::Debug for GenericError {
@@ -53,10 +52,7 @@ impl ResponseError for GenericError {
             GenericError::InvalidJWT(error_msg) => error_msg.to_string(),
         };
 
-        HttpResponse::build(status_code).json(GenericResponse::error(
-            &inner_error_msg,
-            status_code_str,
-            Some(()),
-        ))
+        HttpResponse::build(status_code)
+            .json(GenericResponse::error(&inner_error_msg, status_code_str))
     }
 }

@@ -1,4 +1,3 @@
-
 use utoipa::OpenApi;
 use utoipauto::utoipauto;
 

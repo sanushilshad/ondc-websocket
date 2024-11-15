@@ -1,11 +1,10 @@
-
+use opentelemetry::trace::TracerProvider as _;
 use tracing::{subscriber::set_global_default, Subscriber};
 use tracing_log::LogTracer;
 use tracing_subscriber::fmt::MakeWriter;
 use tracing_subscriber::{
     filter::LevelFilter, fmt, layer::SubscriberExt, EnvFilter, Layer, Registry,
 };
-use opentelemetry::trace::TracerProvider as _;
 pub fn get_subscriber<Sink>(
     _name: String,
     env_filter: String,
@@ -28,8 +27,6 @@ pub fn init_subscriber(subscriber: impl Subscriber + Send + Sync) {
     set_global_default(subscriber).expect("Failed to set subscriber");
 }
 
-
-
 pub fn get_subscriber_with_jeager<Sink>(
     name: String,
     env_filter: String,
@@ -42,8 +39,8 @@ where
         .tracing()
         .with_exporter(opentelemetry_otlp::new_exporter().tonic())
         .install_batch(opentelemetry_sdk::runtime::Tokio)
-    
-        .expect("Couldn't create OTLP tracer").tracer(name);
+        .expect("Couldn't create OTLP tracer")
+        .tracer(name);
     let telemetry_layer: tracing_opentelemetry::OpenTelemetryLayer<
         Registry,
         opentelemetry_sdk::trace::Tracer,

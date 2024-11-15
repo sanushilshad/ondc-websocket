@@ -1,16 +1,12 @@
-
+use crate::{errors::GenericError, pulsar_client::PulsarClient, websocket::WebSocketActionType};
 use actix_http::Payload;
+use actix_web::{web, FromRequest, HttpRequest};
 use futures::future::LocalBoxFuture;
 use secrecy::SecretString;
 use serde::{Deserialize, Serialize};
-use utoipa:: ToSchema;
-use uuid::Uuid;
-use actix_web::{web, FromRequest, HttpRequest};
 use serde_json::Value;
-use crate::{errors::GenericError, websocket::WebSocketActionType};
-
-
-
+use utoipa::ToSchema;
+use uuid::Uuid;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct JWTClaims {
@@ -18,46 +14,37 @@ pub struct JWTClaims {
     pub exp: usize,
 }
 
-
 #[derive(Serialize, Debug, ToSchema)]
-pub struct GenericResponse<D> {
+pub struct GenericResponse {
     pub status: bool,
     pub customer_message: String,
     pub code: String,
-    pub data: Option<D>,
 }
 
-impl<D> GenericResponse<D> {
-    pub fn success(message: &str, data: Option<D>) -> Self {
+impl GenericResponse {
+    pub fn success(message: &str) -> Self {
         Self {
             status: true,
             customer_message: String::from(message),
             code: String::from("200"),
-            data,
         }
     }
 
-    pub fn error(message: &str, code: &str, data: Option<D>) -> Self {
+    pub fn error(message: &str, code: &str) -> Self {
         Self {
             status: false,
             customer_message: String::from(message),
             code: String::from(code),
-            data,
         }
     }
 }
 
-
-
-
 #[derive(Debug, Deserialize, Clone)]
-pub struct ApplicationSettings {
+pub struct ApplicationSetting {
     pub port: u16,
     pub host: String,
-    pub workers: usize
+    pub workers: usize,
 }
-
-
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Jwt {
@@ -65,22 +52,31 @@ pub struct Jwt {
     pub expiry: i64,
 }
 
-
-
 #[derive(Debug, Deserialize, Clone)]
 pub struct SecretSetting {
     pub jwt: Jwt,
 }
 
+#[derive(Debug, Deserialize, Clone)]
+pub struct PulsarSetting {
+    pub topic: String,
+    pub consumer: String,
+    pub subscription: String,
+    pub url: String,
+}
+
+impl PulsarSetting {
+    pub async fn client(self) -> Result<PulsarClient, pulsar::Error> {
+        PulsarClient::new(self.url, self.topic).await
+    }
+}
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Settings {
-    pub application: ApplicationSettings,
+    pub application: ApplicationSetting,
     pub secret: SecretSetting,
+    pub pulsar: PulsarSetting,
 }
-
-
-
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -100,7 +96,6 @@ impl WSKeyTrait for WebSocketParam {
     }
 }
 
-
 #[derive(Deserialize, Debug, Serialize, ToSchema)]
 pub struct WSRequest {
     #[schema(value_type = String)]
@@ -109,8 +104,7 @@ pub struct WSRequest {
     pub business_id: Option<Uuid>,
     pub device_id: Option<String>,
     pub action_type: WebSocketActionType,
-    pub data: Value
-    
+    pub data: Value,
 }
 
 impl WSKeyTrait for WSRequest {

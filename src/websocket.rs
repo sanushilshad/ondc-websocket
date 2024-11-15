@@ -29,14 +29,14 @@ pub enum WebSocketActionType {
     Cancel,
     Info,
     Issue,
-    IssueStatus
+    IssueStatus,
 }
 
 #[derive(ActixMessage)]
 #[rtype(result = "()")]
 pub struct Message(pub String);
 
-#[derive(ActixMessage, Serialize)]
+#[derive(ActixMessage, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[rtype(result = "()")]
 pub struct MessageToClient {
@@ -71,6 +71,13 @@ impl Server {
             sessions: HashMap::new(),
         }
     }
+    pub fn session_exists(&self, id: &str) -> bool {
+        if self.sessions.get(id).is_some() {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     fn send_message_to(&self, id: &str, data: SerdeResult<String>) {
         if let Some(recipient) = self.sessions.get(id) {
@@ -85,7 +92,6 @@ impl Server {
                 }
             }
         } else {
-
             warn!("No session found with ID: {}", id);
         }
     }
@@ -136,6 +142,20 @@ impl Handler<Disconnect> for Server {
 
     fn handle(&mut self, msg: Disconnect, _: &mut Context<Self>) {
         self.sessions.remove(&msg.id);
+    }
+}
+
+#[derive(ActixMessage)]
+#[rtype(result = "bool")]
+pub struct SessionExists {
+    pub id: String,
+}
+
+impl Handler<SessionExists> for Server {
+    type Result = bool;
+
+    fn handle(&mut self, msg: SessionExists, _: &mut Context<Self>) -> Self::Result {
+        self.session_exists(&msg.id)
     }
 }
 
