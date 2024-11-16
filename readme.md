@@ -8,7 +8,7 @@ ONDC Websocket Service
 |---|---|
 | Server | Rust (Actix-web), Bash |
 | API Documention | OpenAPI Swagger |
-
+| Messaging System |	Apache Pulsar |
 
 ## CUSTOM COMMAND FOR DEBUG:
 ### FOR MIGRATION:
@@ -50,17 +50,7 @@ cargo sqlx prepare
 - `env.sh`:
 ```
 
-## DATABASE VARIABLES
-export DATABASE__PASSWORD=""
-export DATABASE__PORT=5000
-export DATABASE__HOST=""
-export DATABASE__NAME=""
-export DATABASE__TEST_NAME=""
-export DATABASE_URL="postgres://postgres:{{password}}@{{ip}}:{{port}}/{{database_name}}"
-export DATABASE__USERNAME="postgres"
-export DATABASE__ACQUIRE_TIMEOUT=5
-export DATABASE__MAX_CONNECTIONS=2000
-export DATABASE__MIN_CONNECTIONS=10
+## TRACE VARIABLE
 export OTEL_SERVICE_NAME="ondc-websocket"
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="http://localhost:4317"
 
@@ -76,6 +66,12 @@ export APPLICATION__ACCOUNT_NAME=""
 export APPLICATION__PORT=8001
 export APPLICATION__HOST=0.0.0.0
 export APPLICATION__WORKERS=16
+
+## PULSAR VARIABLE
+export PULSAR__TOPIC="sanu"
+export PULSAR__CONSUMER="test_consumer"
+export PULSAR__SUBSCRIPTION="test_subscription"
+export PULSAR__URL="pulsar://localhost:6650"
 
 ```
 
@@ -108,3 +104,79 @@ bash restart.sh
 
 ## API DOCUMENTATION:
 The API Docmentation can be found at `https://{{domain}}/docs/` after running the server.
+
+## DEBUG SETUP:
+- launch.json
+```json
+{
+
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'ondc-websocket'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=ondc-websocket",
+                    "--package=ondc-websocket"
+                ],
+                "filter": {
+                    "name": "ondc-websocket",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
+            "preLaunchTask": "cargo build",
+        },
+    ]
+}
+```
+- settings.json
+
+```json
+{
+    "[rust]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+    },
+    "editor.formatOnSave": true,
+    "rust-analyzer.linkedProjects": [
+        "./Cargo.toml"
+    ],
+}
+```
+
+- tasks.json
+```json
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "cargo build",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "build",
+                "--bin=ondc-websocket",
+                "--package=ondc-websocket"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$rustc"
+            ]
+        }
+    ]
+}
+```
+
+## MILESTONES (2/2)
+* [x] Move Websocket implementation as seperate service.
+* [x] Integrate Pulsar.
