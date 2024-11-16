@@ -56,15 +56,12 @@ impl PulsarClient {
     }
 
     pub async fn get_producer(&self) -> Producer<TokioExecutor> {
-        //         let
-        let producer = self
-            .client
+        self.client
             .producer()
             .with_topic(self.get_product_topic())
             .build()
             .await
-            .expect("Failed to create producer");
-        producer
+            .expect("Failed to create producer")
     }
 
     pub async fn get_consumer(

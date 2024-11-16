@@ -72,11 +72,7 @@ impl Server {
         }
     }
     pub fn session_exists(&self, id: &str) -> bool {
-        if self.sessions.get(id).is_some() {
-            return true;
-        } else {
-            return false;
-        }
+        self.sessions.contains_key(id)
     }
 
     fn send_message_to(&self, id: &str, data: SerdeResult<String>) {

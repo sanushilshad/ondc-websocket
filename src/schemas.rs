@@ -81,9 +81,9 @@ pub struct Settings {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct WebSocketParam {
-    pub user_id: Uuid,
-    pub business_id: Uuid,
-    pub device_id: String,
+    pub user_id: Option<Uuid>,
+    pub business_id: Option<Uuid>,
+    pub device_id: Option<String>,
 }
 
 pub trait WSKeyTrait {
@@ -92,11 +92,23 @@ pub trait WSKeyTrait {
 
 impl WSKeyTrait for WebSocketParam {
     fn get_ws_key(&self) -> String {
-        format!("{}#{}#{}", self.user_id, self.business_id, self.device_id)
+        format!(
+            "{}#{}#{}",
+            self.user_id.map_or("NA".to_string(), |id| id.to_string()),
+            self.business_id
+                .map_or("NA".to_string(), |id| id.to_string()),
+            self.device_id.clone().unwrap_or("NA".to_string())
+        )
     }
 }
 
-#[derive(Deserialize, Debug, Serialize, ToSchema)]
+#[derive(Deserialize, Debug, PartialEq, ToSchema)]
+pub enum ProcessType {
+    Immediate,
+    Deferred,
+}
+
+#[derive(Deserialize, Debug, ToSchema)]
 pub struct WSRequest {
     #[schema(value_type = String)]
     pub user_id: Option<Uuid>,
@@ -105,6 +117,7 @@ pub struct WSRequest {
     pub device_id: Option<String>,
     pub action_type: WebSocketActionType,
     pub data: Value,
+    pub process_type: Option<ProcessType>,
 }
 
 impl WSKeyTrait for WSRequest {

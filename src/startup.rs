@@ -7,7 +7,6 @@ use actix::Actor;
 use actix_web::dev::Server;
 use actix_web::{web, App, HttpServer};
 use std::net::TcpListener;
-use std::sync::Arc;
 use tokio::sync::Mutex;
 use tracing_actix_web::TracingLogger;
 pub struct Application {
